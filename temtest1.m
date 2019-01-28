@@ -1,15 +1,15 @@
 clear all
 clc
-im=imread('2.jpg');
-figure,title('origin'),imshow(im);
+im=imread('3.jpg');%处理图像名称
+figure,imshow(im,[]),title('origin');
 % Iycbcr=rgb2ycbcr(im);
-im=rgb2gray(im);
+im=rgb2gray(im);%灰度化
 im=double(im);
 [minn,minm,immin]=imin(im);
 immax=max(max(im));
 [n,m]=size(im);
 % hold on;
-[count,center]=hist(im(:),[0:255]);
+[count,center]=hist(im(:),[0:255]);%获取直方图
 % hist(im(:),[50:255]);
 [pks,locs] = findpeaks(count,'minpeakdistance',10); %峰值选区与图像的灰度层次有关最后一个参数
 % plot(center(locs),pks,'*','color','R'); 
@@ -33,16 +33,16 @@ for i=1:length(locs)
            for tcir=1:k_class
                 if rec(tcir)>2
                 xcircle=[resx(tcir,1:rec(tcir));resy(tcir,1:rec(tcir))];
-            [z,r]=fitcircle(xcircle,'linear');
+            [z,r]=fitcircle(xcircle,'linear');%z r是参数方程的系数，可以用于三维重建确定圆心及半径
             Iout=zeros(n,m);
-            for t=0:0.01:2*pi
+            for t=0:0.01:2*pi%画圆
             Iout(ceil(z(1) + r * cos(t)),ceil(z(2) + r * sin(t)))=1;
             end
-            Iout=imfill(Iout,'hole');
+            Iout=imfill(Iout,'hole');%填充圆形内部
 %             Iout=~Iout;
 %            figure, imshow(Iout,[]);
             Iout=imresize(Iout,[n,m]);
-            imo=imo-((255.*ones(n,m)-imo).*(255.*ones(n,m)-200.*Iout))/200.*Iout;%我也不知道基色的选取问题
+            imo=imo-((255.*ones(n,m)-imo).*(255.*ones(n,m)-200.*Iout))/200.*Iout;%这是ps的颜色加深模式。其中混合色为自己选择。
 %             figure,imshow(imo,[]);
                 end
             end
@@ -50,7 +50,8 @@ for i=1:length(locs)
          end
     end
 end
-figure,title('result'),imshow(imo,[]);
+imo = mat2gray(imo);
+figure,imshow(imo,[]),title('result');
 %              
 %              
 %              
